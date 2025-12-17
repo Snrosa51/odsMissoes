@@ -1,3 +1,5 @@
+# FORCE_REBUILD_2025_12_17
+
 FROM node:18
 
 WORKDIR /app
