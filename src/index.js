@@ -1,21 +1,26 @@
+require('dotenv').config();
 const express = require('express');
+const path = require('path');
+
 const missionRoutes = require('./routes/missions');
-
-const respostasRoutes = require("./routes/respostas");
-
+const respostasRoutes = require('./routes/respostas');
 
 const app = express();
+
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send("API ODS Missões rodando!");
+/* 🔹 SERVIR FRONTEND */
+app.use(express.static(path.join(__dirname, '../public')));
+
+/* 🔹 ROTAS DA API */
+app.use('/api/missions', missionRoutes);
+app.use('/api/respostas', respostasRoutes);
+
+/* 🔹 FALLBACK PARA SPA / FRONTEND */
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-app.use('/api/missions', missionRoutes);
-
-app.use("/api/respostas", respostasRoutes);
-
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+app.listen(process.env.PORT, () => {
+  console.log(`Servidor rodando na porta ${process.env.PORT}`);
 });
