@@ -1,6 +1,4 @@
-# FORCE_REBUILD_AFTER_ENV_REMOVAL
-
-FROM node:18
+FROM node:18-alpine
 
 WORKDIR /app
 
@@ -9,6 +7,8 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3000
+ENV NODE_ENV=production
+
+EXPOSE 8080
 
 CMD ["npm", "start"]
