@@ -4,15 +4,14 @@ const db = require('../db');
  * POST /api/respostas
  */
 exports.create = (req, res) => {
-  const { nome, serie, missaoTitulo, acoes } = req.body;
+  const { nome, serie, missao_titulo, acoes } = req.body;
 
-  if (!nome || !serie || !missaoTitulo || !acoes || !acoes.length) {
+  if (!nome || !serie || !missao_titulo || !acoes || !acoes.length) {
     return res.status(400).json({
       error: 'Dados incompletos para registrar resposta'
     });
   }
 
-  // regra simples de pontuação
   const pontos = acoes.length * 10;
 
   const sql = `
@@ -26,7 +25,7 @@ exports.create = (req, res) => {
     [
       nome,
       serie,
-      missaoTitulo,
+      missao_titulo,
       JSON.stringify(acoes),
       pontos
     ],
@@ -38,7 +37,10 @@ exports.create = (req, res) => {
         });
       }
 
-      res.json({ pontos });
+      res.json({
+        success: true,
+        pontos
+      });
     }
   );
 };
