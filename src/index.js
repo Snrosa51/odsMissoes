@@ -4,6 +4,7 @@ const path = require('path');
 
 const missionRoutes = require('./routes/missions');
 const respostasRoutes = require('./routes/respostas');
+const rankingRoutes = require('./routes/ranking');
 
 const app = express();
 
@@ -15,6 +16,8 @@ app.use(express.static(path.join(__dirname, '../public')));
 /* 🔹 ROTAS DA API */
 app.use('/api/missions', missionRoutes);
 app.use('/api/respostas', respostasRoutes);
+app.use('/api/ranking', rankingRoutes);
+
 
 /* 🔹 FALLBACK PARA SPA / FRONTEND */
 app.get('*', (req, res) => {

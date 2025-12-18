@@ -1,31 +1,44 @@
-const db = require("../db");
+const db = require('../db');
 
+/**
+ * POST /api/respostas
+ */
 exports.create = (req, res) => {
   const { nome, serie, missaoTitulo, acoes } = req.body;
-  const titulo = req.body.missaoTitulo || req.body.missao_titulo;
 
-
-  if (!nome || !serie || !missaoTitulo || !Array.isArray(acoes)) {
-    return res.status(400).json({ error: "Dados inválidos." });
+  if (!nome || !serie || !missaoTitulo || !acoes || !acoes.length) {
+    return res.status(400).json({
+      error: 'Dados incompletos para registrar resposta'
+    });
   }
 
+  // regra simples de pontuação
   const pontos = acoes.length * 10;
 
   const sql = `
-    INSERT INTO respostas (nome, serie, missao_titulo, acoes, pontos)
+    INSERT INTO respostas
+    (nome, serie, missao_titulo, acoes, pontos)
     VALUES (?, ?, ?, ?, ?)
   `;
 
   db.query(
     sql,
-    [nome, serie, missaoTitulo, JSON.stringify(acoes), pontos],
+    [
+      nome,
+      serie,
+      missaoTitulo,
+      JSON.stringify(acoes),
+      pontos
+    ],
     (err) => {
       if (err) {
-        console.error("Erro MySQL:", err);
-        return res.status(500).json({ error: "Erro ao salvar resposta." });
+        console.error('Erro ao salvar resposta:', err);
+        return res.status(500).json({
+          error: 'Erro ao salvar resposta.'
+        });
       }
 
-      res.json({ message: "Resposta registrada com sucesso!", pontos });
+      res.json({ pontos });
     }
   );
 };
