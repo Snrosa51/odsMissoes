@@ -24,7 +24,7 @@ async function carregarMissoes() {
   try {
     selMissao.innerHTML = `<option>Carregando...</option>`;
 
-    const resp = await fetch(`${API_BASE}/missoes`);
+    const resp = await fetch(`${API_BASE}/missions`);
     if (!resp.ok) throw new Error('Erro ao buscar missões');
 
     missoesCache = await resp.json();

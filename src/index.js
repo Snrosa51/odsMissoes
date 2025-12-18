@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 // =======================
 // API
 // =======================
-app.use('/api/missoes', missionsRoutes);
+app.use('/api/missions', missionsRoutes);
 app.use('/api/respostas', respostasRoutes);
 app.use('/api/ranking', rankingRoutes);
 

@@ -1,12 +1,7 @@
-const db = require('../db');
-
-/**
- * POST /api/respostas
- */
 exports.create = (req, res) => {
-  const { nome, serie, missao_titulo, acoes } = req.body;
+  const { nome, serie, missaoTitulo, acoes } = req.body;
 
-  if (!nome || !serie || !missao_titulo || !acoes || !acoes.length) {
+  if (!nome || !serie || !missaoTitulo || !acoes || !acoes.length) {
     return res.status(400).json({
       error: 'Dados incompletos para registrar resposta'
     });
@@ -25,7 +20,7 @@ exports.create = (req, res) => {
     [
       nome,
       serie,
-      missao_titulo,
+      missaoTitulo,
       JSON.stringify(acoes),
       pontos
     ],
@@ -37,6 +32,7 @@ exports.create = (req, res) => {
         });
       }
 
+      // 🔥 retorno esperado pelo frontend
       res.json({
         success: true,
         pontos
