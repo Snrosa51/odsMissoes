@@ -2,6 +2,8 @@ const db = require("../db");
 
 exports.create = (req, res) => {
   const { nome, serie, missaoTitulo, acoes } = req.body;
+  const titulo = req.body.missaoTitulo || req.body.missao_titulo;
+
 
   if (!nome || !serie || !missaoTitulo || !Array.isArray(acoes)) {
     return res.status(400).json({ error: "Dados inválidos." });
