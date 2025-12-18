@@ -20,6 +20,6 @@ app.use('/api/ranking', rankingRoutes);
 
 // 🚨 NUNCA fixe porta no Railway
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
