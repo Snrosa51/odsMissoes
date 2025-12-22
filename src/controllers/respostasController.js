@@ -1,3 +1,5 @@
+const db = require("../db")
+
 exports.create = (req, res) => {
   const { nome, serie, missaoTitulo, acoes } = req.body;
 

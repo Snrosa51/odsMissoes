@@ -13,7 +13,7 @@ exports.getRanking = (req, res) => {
     FROM respostas
     GROUP BY nome, serie, missao_titulo
     ORDER BY pontos DESC
-    LIMIT 20
+    LIMIT 50
   `;
 
   db.query(sql, (err, rows) => {
