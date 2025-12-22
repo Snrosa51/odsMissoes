@@ -16,7 +16,7 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 // APIs
 console.log("Registrando rotas...");
 
-app.use("/api/missoes", require("./routes/missions"));
+app.use("/api/missions", require("./routes/missions"));
 console.log("✓ /api/missoes");
 
 app.use("/api/respostas", require("./routes/respostas"));
