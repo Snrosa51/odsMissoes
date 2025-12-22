@@ -14,9 +14,23 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "public")));
 
 // APIs
-app.use("/api/missions", require("./routes/missions"));
+console.log("Registrando rotas...");
+
+app.use("/api/missoes", require("./routes/missions"));
+console.log("✓ /api/missoes");
+
 app.use("/api/respostas", require("./routes/respostas"));
+console.log("✓ /api/respostas");
+
 app.use("/api/ranking", require("./routes/ranking"));
+console.log("✓ /api/ranking");
+
+
+// rota de teste (IMPORTANTE)
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok" });
+});
+
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
