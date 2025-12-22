@@ -6,9 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       font-family: Arial, sans-serif;
@@ -43,18 +41,13 @@
       margin-bottom: 10px;
     }
 
-    .card-header h2 {
-      margin: 0;
-    }
-
     label {
       display: block;
       margin-top: 12px;
       font-weight: bold;
     }
 
-    input[type="text"],
-    select {
+    input[type="text"], select {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
@@ -95,39 +88,22 @@
       font-size: 0.95rem;
     }
 
-    .btn-registrar {
-      background: #2e7d32;
-      color: #fff;
-    }
-
-    .btn-ranking {
-      background: #1565c0;
-      color: #fff;
-    }
-
-    .btn-recarregar {
-      background: #6a1b9a;
-      color: #fff;
-    }
+    .btn-registrar { background: #2e7d32; color: #fff; }
+    .btn-ranking { background: #1565c0; color: #fff; }
+    .btn-recarregar { background: #6a1b9a; color: #fff; }
 
     .status {
       margin-top: 10px;
       font-size: 0.9rem;
     }
 
-    .status.ok {
-      color: #2e7d32;
-    }
-
-    .status.erro {
-      color: #c62828;
-    }
+    .status.ok { color: #2e7d32; }
+    .status.erro { color: #c62828; }
 
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
-      font-size: 0.95rem;
     }
 
     th, td {
@@ -136,33 +112,15 @@
       text-align: left;
     }
 
-    th {
-      background: #f0f0f0;
-    }
-
-    @media (max-width: 600px) {
-      .card-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-
-      .botoes {
-        flex-direction: column;
-      }
-
-      button {
-        width: 100%;
-      }
-    }
+    th { background: #f0f0f0; }
   </style>
 </head>
 
 <body>
   <div class="container">
-    <h1>ODS Missões – Dashboard</h1>
+    <h1>ODS Missões – Pequenas Ações, Grandes Mudanças</h1>
 
-    <!-- CARD: REGISTRAR AÇÃO -->
+    <!-- REGISTRO -->
     <div class="card">
       <div class="card-header">
         <h2>Registrar Ação</h2>
@@ -171,25 +129,31 @@
         </button>
       </div>
 
-      <p>
-        Preencha seus dados, escolha uma missão (ODS) e marque as ações que você realizou.
-      </p>
-
       <label for="nome">Seu nome</label>
       <input type="text" id="nome" placeholder="Digite seu nome completo" />
 
       <label for="serie">Série / Turma</label>
-      <input type="text" id="serie" placeholder="Ex: 7º ano A" />
+      <select id="serie">
+        <option value="">Selecione...</option>
+        <option>1º ano</option>
+        <option>2º ano</option>
+        <option>3º ano</option>
+        <option>4º ano</option>
+        <option>5º ano</option>
+        <option>6º ano</option>
+        <option>7º ano</option>
+        <option>8º ano</option>
+        <option>9º ano</option>
+        <option>Convidado Especial</option>
+      </select>
 
       <label for="missaoSelect">Missão (ODS)</label>
       <select id="missaoSelect">
-        <option value="">Carregando...</option>
+        <option value="">Selecione uma missão...</option>
       </select>
 
       <label>Ações realizadas</label>
-      <div id="listaAcoes" class="acoes-lista">
-        <!-- checkboxes geradas pelo main.js -->
-      </div>
+      <div id="listaAcoes" class="acoes-lista"></div>
 
       <div class="botoes">
         <button id="btnRegistrar" class="btn-registrar">
@@ -203,20 +167,14 @@
       <div id="statusRegistro" class="status"></div>
     </div>
 
-    <!-- CARD: RANKING -->
+    <!-- RANKING -->
     <div class="card">
       <h2>Ranking de Pontos</h2>
-      <p>
-        Veja a classificação por pontos. Quem registra mais ações, sobe no ranking.
-      </p>
-
-      <div id="rankingContainer">
-        Nenhum registro
-      </div>
+      <div id="rankingContainer">Nenhum registro</div>
     </div>
   </div>
 
-  <!-- JS -->
   <script src="main.js"></script>
 </body>
 </html>
+
