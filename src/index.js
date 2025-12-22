@@ -1,8 +1,11 @@
 // src/index.js
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
 
-const express = require("express");
-const path = require("path");
-const cors = require("cors");
+const missionsRoutes = require('./routes/missions');
+const respostasRoutes = require('./routes/respostas');
+const rankingRoutes = require('./routes/ranking');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -10,21 +13,27 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// frontend
-app.use(express.static(path.join(__dirname, "..", "public")));
+// arquivos estáticos
+app.use(express.static(path.join(__dirname, '../public')));
 
-// APIs
-console.log("Registrando rotas...");
+// ROTAS DA API (ANTES DO FALLBACK)
+app.use('/api/missoes', missionsRoutes);
+app.use('/api/respostas', respostasRoutes);
+app.use('/api/ranking', rankingRoutes);
 
-app.use("/api/missions", require("./routes/missions"));
-console.log("✓ /api/missoes");
+// healthcheck
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
 
-app.use("/api/respostas", require("./routes/respostas"));
-console.log("✓ /api/respostas");
+// fallback frontend
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
+});
 
-app.use("/api/ranking", require("./routes/ranking"));
-console.log("✓ /api/ranking");
-
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
 
 // rota de teste (IMPORTANTE)
 app.get("/api/health", (req, res) => {
@@ -44,10 +53,5 @@ app.get("/api/missoes", async (req, res) => {
     console.error("Erro em /api/missoes:", err);
     res.status(500).json({ erro: "Erro ao carregar missões" });
   }
-});
-
-
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
 });
 
