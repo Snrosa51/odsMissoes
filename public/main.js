@@ -1,27 +1,6 @@
 // =======================
-// API base (mesmo domínio)
+// Carregar missões (ODS)
 // =======================
-const API_BASE = '/api';
-
-// Cache
-let missoesCache = [];
-
-// Elementos
-const selMissao = document.getElementById("missaoSelect");
-const listaAcoesDiv = document.getElementById("listaAcoes");
-const missaoDetalhesDiv = document.getElementById("missaoDetalhes");
-const statusRegistroDiv = document.getElementById("statusRegistro");
-const rankingConteudoDiv = document.getElementById("rankingConteudo");
-
-const btnRecarregarMissoes = document.getElementById("btnRecarregarMissoes");
-const btnRegistrar = document.getElementById("btnRegistrar");
-const btnMostrarRanking = document.getElementById("btnMostrarRanking");
-
-// =======================
-// 1) Carregar missões
-// =======================
-// public/main.js
-
 async function carregarMissoes() {
   const select = document.getElementById("missaoSelect");
   const listaAcoes = document.getElementById("listaAcoes");
@@ -64,6 +43,9 @@ async function carregarMissoes() {
   }
 }
 
+// =======================
+// Registrar resposta
+// =======================
 async function registrarResposta() {
   const nome = document.getElementById("nome").value.trim();
   const serie = document.getElementById("serie").value;
@@ -103,6 +85,9 @@ async function registrarResposta() {
   }
 }
 
+// =======================
+// Carregar ranking
+// =======================
 async function carregarRanking() {
   const container = document.getElementById("rankingContainer");
   container.innerHTML = "Carregando ranking...";
@@ -112,7 +97,7 @@ async function carregarRanking() {
     const ranking = await resp.json();
 
     if (ranking.length === 0) {
-      container.innerHTML = "Sem registros ainda.";
+      container.innerHTML = "Nenhum registro.";
       return;
     }
 
@@ -146,7 +131,9 @@ async function carregarRanking() {
   }
 }
 
-// eventos
+// =======================
+// Eventos
+// =======================
 document.addEventListener("DOMContentLoaded", () => {
   carregarMissoes();
 
@@ -155,9 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("btnRanking")
     .addEventListener("click", carregarRanking);
-});
-// Inicialização
 
-carregarMissoes();
-registrarResposta();
-carregarRanking();
+  document.getElementById("btnRecarregarMissoes")
+    ?.addEventListener("click", carregarMissoes);
+});

@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>ODS Missões – Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <style>
     * {
       box-sizing: border-box;
@@ -17,9 +18,9 @@
       color: #333;
     }
 
-    h1, h2 {
+    h1 {
       text-align: center;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
 
     .container {
@@ -29,9 +30,9 @@
 
     .card {
       background: #fff;
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 20px;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
 
@@ -44,37 +45,37 @@
 
     .card-header h2 {
       margin: 0;
-      font-size: 1.2rem;
     }
 
     label {
       display: block;
-      margin-top: 10px;
+      margin-top: 12px;
       font-weight: bold;
     }
 
     input[type="text"],
     select {
       width: 100%;
-      padding: 8px;
+      padding: 10px;
       margin-top: 5px;
-      border-radius: 6px;
+      border-radius: 8px;
       border: 1px solid #ccc;
+      font-size: 1rem;
     }
 
     .acoes-lista {
       margin-top: 10px;
-      padding-left: 10px;
+      padding-left: 5px;
     }
 
     .acoes-lista label {
-      font-weight: normal;
       display: flex;
       align-items: center;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      font-weight: normal;
     }
 
-    .acoes-lista input[type="checkbox"] {
+    .acoes-lista input {
       margin-right: 8px;
     }
 
@@ -87,10 +88,11 @@
 
     button {
       border: none;
-      border-radius: 6px;
-      padding: 10px 16px;
+      border-radius: 8px;
+      padding: 10px 18px;
       cursor: pointer;
       font-weight: bold;
+      font-size: 0.95rem;
     }
 
     .btn-registrar {
@@ -103,7 +105,7 @@
       color: #fff;
     }
 
-    .btn-recarregar-ods {
+    .btn-recarregar {
       background: #6a1b9a;
       color: #fff;
     }
@@ -125,67 +127,53 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
     }
 
     th, td {
       padding: 8px;
-      text-align: left;
       border-bottom: 1px solid #ddd;
+      text-align: left;
     }
 
     th {
       background: #f0f0f0;
     }
 
-    tr:nth-child(even) {
-      background: #fafafa;
-    }
-
-    .missao-info {
-      margin-top: 8px;
-      font-size: 0.9rem;
-      color: #555;
-    }
-
-    .ods-badge {
-      display: inline-block;
-      background: #ffd54f;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      margin-left: 6px;
-    }
-
     @media (max-width: 600px) {
       .card-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 8px;
+        gap: 10px;
       }
+
       .botoes {
         flex-direction: column;
       }
+
       button {
         width: 100%;
       }
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h1>ODS Missões – Dashboard</h1>
 
-    <!-- Card de registro de ação -->
+    <!-- CARD: REGISTRAR AÇÃO -->
     <div class="card">
       <div class="card-header">
         <h2>Registrar Ação</h2>
-        <button id="btnRecarregarMissoes" class="btn-recarregar-ods">
+        <button id="btnRecarregarMissoes" class="btn-recarregar">
           Recarregar ODS e Ações
         </button>
       </div>
 
-      <p>Preencha seus dados, escolha uma missão (ODS) e marque as ações que você realizou.</p>
+      <p>
+        Preencha seus dados, escolha uma missão (ODS) e marque as ações que você realizou.
+      </p>
 
       <label for="nome">Seu nome</label>
       <input type="text" id="nome" placeholder="Digite seu nome completo" />
@@ -195,21 +183,19 @@
 
       <label for="missaoSelect">Missão (ODS)</label>
       <select id="missaoSelect">
-        <option value="">Carregando missões...</option>
+        <option value="">Carregando...</option>
       </select>
-
-      <div id="missaoDetalhes" class="missao-info"></div>
 
       <label>Ações realizadas</label>
       <div id="listaAcoes" class="acoes-lista">
-        <!-- checkboxes criadas via JS -->
+        <!-- checkboxes geradas pelo main.js -->
       </div>
 
       <div class="botoes">
         <button id="btnRegistrar" class="btn-registrar">
           Registrar Ação
         </button>
-        <button id="btnMostrarRanking" class="btn-ranking">
+        <button id="btnRanking" class="btn-ranking">
           Ver Ranking
         </button>
       </div>
@@ -217,18 +203,20 @@
       <div id="statusRegistro" class="status"></div>
     </div>
 
-    <!-- Card de ranking -->
+    <!-- CARD: RANKING -->
     <div class="card">
-      <div class="card-header">
-        <h2>Ranking de Pontos</h2>
-      </div>
-      <p>Veja a classificação por pontos. Quem registra mais ações, sobe no ranking.</p>
+      <h2>Ranking de Pontos</h2>
+      <p>
+        Veja a classificação por pontos. Quem registra mais ações, sobe no ranking.
+      </p>
 
-      <div id="rankingConteudo">Carregando ranking...</div>
+      <div id="rankingContainer">
+        Nenhum registro
+      </div>
     </div>
   </div>
 
+  <!-- JS -->
   <script src="main.js"></script>
 </body>
 </html>
-
