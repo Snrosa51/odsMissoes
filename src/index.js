@@ -1,41 +1,24 @@
-require('dotenv').config();
-const express = require('express');
-const path = require('path');
+// src/index.js
 
-const missionsRoutes = require('./routes/missions');
-const respostasRoutes = require('./routes/respostas');
-const rankingRoutes = require('./routes/ranking');
+const express = require("express");
+const path = require("path");
+const cors = require("cors");
 
 const app = express();
+const PORT = process.env.PORT || 8080;
 
-// =======================
-// Middlewares
-// =======================
+app.use(cors());
 app.use(express.json());
 
-// =======================
-// Frontend estático
-// =======================
-app.use(express.static(path.join(__dirname, '../public')));
+// frontend
+app.use(express.static(path.join(__dirname, "..", "public")));
 
-// =======================
-// Rota base (health check)
-// =======================
-app.get('/', (req, res) => {
-  res.send('API ODS Missões rodando!');
-});
+// APIs
+app.use("/api/missoes", require("./routes/missions"));
+app.use("/api/respostas", require("./routes/respostas"));
+app.use("/api/ranking", require("./routes/ranking"));
 
-// =======================
-// API
-// =======================
-app.use('/api/missions', missionsRoutes);
-app.use('/api/respostas', respostasRoutes);
-app.use('/api/ranking', rankingRoutes);
-
-// =======================
-// Porta
-// =======================
-const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
+

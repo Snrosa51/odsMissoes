@@ -2,7 +2,7 @@
 
 const db = require("../db");
 
-exports.getMissoes = async (req, res) => {
+async function getMissoes(req, res) {
   try {
     const [rows] = await db.query(
       "SELECT id, nome, acoes_json FROM missions ORDER BY id"
@@ -15,9 +15,12 @@ exports.getMissoes = async (req, res) => {
     }));
 
     res.json(missoes);
-
   } catch (error) {
     console.error("Erro ao carregar missões:", error);
     res.status(500).json({ erro: "Erro ao carregar missões" });
   }
+}
+
+module.exports = {
+  getMissoes
 };

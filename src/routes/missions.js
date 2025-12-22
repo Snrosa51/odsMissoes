@@ -1,13 +1,10 @@
-const express = require('express');
-const router = express.Router();
-const controller = require('../controllers/missionsController');
-const { getMissoes } = require("../controllers/missionsController");
+// src/routes/missions.js
 
-router.get("/", getMissoes);
-router.get('/', controller.getAll);
-router.get('/:id', controller.getById);
-router.post('/', controller.create);
-router.put('/:id', controller.update);
-router.delete('/:id', controller.remove);
+const express = require("express");
+const router = express.Router();
+
+const missionsController = require("../controllers/missionsController");
+
+router.get("/", missionsController.getMissoes);
 
 module.exports = router;
