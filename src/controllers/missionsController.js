@@ -1,32 +1,23 @@
 // src/controllers/missionsController.js
 
+const db = require("../db");
+
 exports.getMissoes = async (req, res) => {
   try {
-    const missoes = [
-      {
-        id: "ODS3",
-        nome: "ODS 3 – Saúde e Bem-estar",
-        acoes: [
-          { id: "D1", nome: "Lavar as mãos regularmente (antes das refeições e após usar o banheiro)" },
-          { id: "D2", nome: "Manter unhas limpas e cortadas" },
-          { id: "D3", nome: "Usar garrafa de água individual e limpa" }
-        ]
-      },
-      {
-        id: "ODS4",
-        nome: "ODS 4 – Educação de Qualidade",
-        acoes: [
-          { id: "A1", nome: "Jogar o lixo no lugar certo (papel, plástico, orgânico)" },
-          { id: "A2", nome: "Fazer o dever de casa do dia" },
-          { id: "A3", nome: "Ler um livro da biblioteca por 30 minutos ou mais" }
-        ]
-      }
-    ];
+    const [rows] = await db.query(
+      "SELECT id, nome, acoes_json FROM missions ORDER BY id"
+    );
+
+    const missoes = rows.map(row => ({
+      id: row.id,
+      nome: row.nome,
+      acoes: JSON.parse(row.acoes_json)
+    }));
 
     res.json(missoes);
+
   } catch (error) {
-    console.error(error);
+    console.error("Erro ao carregar missões:", error);
     res.status(500).json({ erro: "Erro ao carregar missões" });
   }
 };
-

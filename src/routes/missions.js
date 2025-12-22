@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/missionsController');
+const { getMissoes } = require("../controllers/missionsController");
 
+router.get("/", getMissoes);
 router.get('/', controller.getAll);
 router.get('/:id', controller.getById);
 router.post('/', controller.create);
