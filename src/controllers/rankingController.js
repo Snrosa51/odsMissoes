@@ -8,12 +8,12 @@ exports.getRanking = (req, res) => {
     SELECT 
       nome,
       serie,
-      missao_titulo AS missaoTitulo,
+      missaoTitulo,
       SUM(pontos) AS pontos
     FROM respostas
     GROUP BY nome, serie, missao_titulo
     ORDER BY pontos DESC
-    LIMIT 50
+    LIMIT 12
   `;
 
   db.query(sql, (err, rows) => {

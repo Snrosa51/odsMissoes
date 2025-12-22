@@ -1,26 +1,22 @@
 // src/controllers/missionsController.js
+const db = require('../db');
 
-const db = require("../db");
-
-async function getMissoes(req, res) {
+exports.listarMissoes = async (req, res) => {
   try {
     const [rows] = await db.query(
-      "SELECT id, nome, acoes_json FROM missions ORDER BY id"
+      'SELECT ods_codigo, nome, acoes_json FROM missions'
     );
 
-    const missoes = rows.map(row => ({
-      id: row.id,
+    const missions = rows.map(row => ({
+      ods_codigo: row.ods_codigo,
       nome: row.nome,
-      acoes: JSON.parse(row.acoes_json)
+      acoes: row.acoes_json ? JSON.parse(row.acoes_json) : []
     }));
 
-    res.json(missoes);
+    res.json(missions);
   } catch (error) {
-    console.error("Erro ao carregar missões:", error);
-    res.status(500).json({ erro: "Erro ao carregar missões" });
+    console.error('Erro ao listar missões:', error);
+    res.status(500).json({ error: 'Erro ao buscar missões' });
   }
-}
-
-module.exports = {
-  getMissoes
 };
+

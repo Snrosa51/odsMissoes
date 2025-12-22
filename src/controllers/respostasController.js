@@ -1,19 +1,19 @@
 const db = require("../db")
 
 exports.create = (req, res) => {
-  const { nome, serie, missaoTitulo, acoes } = req.body;
+  const { nome, serie, missaoTitulo, acoes_json } = req.body;
 
-  if (!nome || !serie || !missaoTitulo || !acoes || !acoes.length) {
+  if (!nome || !serie || !missaoTitulo || !acoes_json || !acoes_json.length) {
     return res.status(400).json({
       error: 'Dados incompletos para registrar resposta'
     });
   }
 
-  const pontos = acoes.length * 10;
+  const pontos = acoes_json.length * 10;
 
   const sql = `
     INSERT INTO respostas
-    (nome, serie, missao_titulo, acoes, pontos)
+    (nome, serie, missao_titulo, acoes_json, pontos)
     VALUES (?, ?, ?, ?, ?)
   `;
 
@@ -23,7 +23,7 @@ exports.create = (req, res) => {
       nome,
       serie,
       missaoTitulo,
-      JSON.stringify(acoes),
+      JSON.stringify(acoes_json),
       pontos
     ],
     (err) => {
