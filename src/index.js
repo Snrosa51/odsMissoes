@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "public")));
 
 // APIs
-app.use("/api/missoes", require("./routes/missions"));
+app.use("/api/missions", require("./routes/missions"));
 app.use("/api/respostas", require("./routes/respostas"));
 app.use("/api/ranking", require("./routes/ranking"));
 
