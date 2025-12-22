@@ -31,6 +31,21 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
+// =======================
+// ROTA DIRETA /api/missoes (fallback seguro)
+// =======================
+const missionsController = require("./controllers/missionsController");
+
+app.get("/api/missoes", async (req, res) => {
+  try {
+    console.log("GET /api/missoes chamado");
+    await missionsController.getMissoes(req, res);
+  } catch (err) {
+    console.error("Erro em /api/missoes:", err);
+    res.status(500).json({ erro: "Erro ao carregar missões" });
+  }
+});
+
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
