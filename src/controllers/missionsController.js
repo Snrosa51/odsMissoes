@@ -8,12 +8,35 @@ exports.listarMissoes = async (req, res) => {
       ORDER BY id
     `);
 
-    const missoes = rows.map(m => ({
-      id: m.id,                 // usado internamente
-      codigo: m.codigo,         // exibido (ex: ODS3)
-      nome: m.nome,
-      acoes: m.acoes_json ? JSON.parse(m.acoes_json) : []
-    }));
+    const missoes = rows.map(m => {
+      let acoes = [];
+
+      if (m.acoes_json) {
+        try {
+          // Se vier como string → parse
+          if (typeof m.acoes_json === "string") {
+            acoes = JSON.parse(m.acoes_json);
+          }
+          // Se já vier como objeto → usa direto
+          else if (Array.isArray(m.acoes_json)) {
+            acoes = m.acoes_json;
+          }
+        } catch (e) {
+          console.error(
+            `JSON inválido em missions.id=${m.id}:`,
+            m.acoes_json
+          );
+          acoes = [];
+        }
+      }
+
+      return {
+        id: m.id,
+        codigo: m.codigo,
+        nome: m.nome,
+        acoes
+      };
+    });
 
     res.json(missoes);
 
