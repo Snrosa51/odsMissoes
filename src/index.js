@@ -3,10 +3,10 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-const adminRoutes = require("./routes/admin");
 const missionsRoutes = require('./routes/missions');
 const respostasRoutes = require('./routes/respostas');
 const rankingRoutes = require('./routes/ranking');
+const adminRoutes = require("./routes/admin");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,10 +19,10 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 // ROTAS DA API (NÃO USA FALLBACK)
 
-app.use("/api/admin", adminRoutes);
 app.use('/api/missoes', missionsRoutes);
 app.use('/api/respostas', respostasRoutes);
 app.use('/api/ranking', rankingRoutes);
+app.use("/api/admin", adminRoutes);
 
 // healthcheck
 app.get('/api/health', (req, res) => {
