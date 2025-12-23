@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
+const adminRoutes = require("./routes/admin");
 const missionsRoutes = require('./routes/missions');
 const respostasRoutes = require('./routes/respostas');
 const rankingRoutes = require('./routes/ranking');
@@ -16,7 +17,9 @@ app.use(express.json());
 // arquivos estáticos
 app.use(express.static(path.join(__dirname, '../public')));
 
-// ROTAS DA API (ANTES DO FALLBACK)
+// ROTAS DA API (NÃO USA FALLBACK)
+
+app.use("/api/admin", adminRoutes);
 app.use('/api/missoes', missionsRoutes);
 app.use('/api/respostas', respostasRoutes);
 app.use('/api/ranking', rankingRoutes);
