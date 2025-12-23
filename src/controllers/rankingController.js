@@ -1,9 +1,6 @@
 // src/controllers/rankingController.js
 const db = require('../db');
 
-/**
- * GET /api/ranking
- */
 exports.getRanking = (req, res) => {
   const sql = `
     SELECT
@@ -18,19 +15,20 @@ exports.getRanking = (req, res) => {
 
   db.query(sql, (err, rows) => {
     if (err) {
-      console.error('Erro ao buscar ranking:', err);
+      console.error('ERRO SQL RANKING:', err);
       return res.status(500).json({
         error: 'Erro ao buscar ranking'
       });
     }
 
-    res.json(
-      rows.map((r, index) => ({
-        posicao: index + 1,
-        nome: r.nome,
-        serie: r.serie,
-        pontos: r.pontos
-      }))
-    );
+    const resultado = rows.map((r, index) => ({
+      posicao: index + 1,
+      nome: r.nome,
+      serie: r.serie,
+      pontos: Number(r.pontos)
+    }));
+
+    res.json(resultado);
   });
 };
+
