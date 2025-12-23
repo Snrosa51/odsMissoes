@@ -10,18 +10,23 @@ async function carregarMissoes() {
 
   try {
     const resp = await fetch("/api/missoes");
+    if (!resp.ok) throw new Error("Erro na API");
+
     const missoes = await resp.json();
 
     missoes.forEach(missao => {
       const option = document.createElement("option");
-      option.value = missao.id;
-      option.textContent = missao.nome;
+
+      option.value = missao.id; // ID técnico
+      option.textContent = `${missao.codigo} – ${missao.nome}`;
       option.dataset.acoes = JSON.stringify(missao.acoes);
+
       select.appendChild(option);
     });
 
     select.onchange = () => {
       listaAcoes.innerHTML = "";
+
       const opt = select.selectedOptions[0];
       if (!opt || !opt.dataset.acoes) return;
 
@@ -37,8 +42,8 @@ async function carregarMissoes() {
       });
     };
 
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     select.innerHTML = "<option>Erro ao carregar missões</option>";
   }
 }
@@ -88,15 +93,20 @@ async function registrarResposta() {
 // =======================
 // Carregar ranking
 // =======================
+// =======================
+// Carregar ranking
+// =======================
 async function carregarRanking() {
   const container = document.getElementById("rankingContainer");
   container.innerHTML = "Carregando ranking...";
 
   try {
     const resp = await fetch("/api/ranking");
+    if (!resp.ok) throw new Error("Erro ao buscar ranking");
+
     const ranking = await resp.json();
 
-    if (ranking.length === 0) {
+    if (!Array.isArray(ranking) || ranking.length === 0) {
       container.innerHTML = "Nenhum registro.";
       return;
     }
@@ -111,10 +121,10 @@ async function carregarRanking() {
         </tr>
     `;
 
-    ranking.forEach((item, index) => {
+    ranking.forEach(item => {
       html += `
         <tr>
-          <td>${index + 1}</td>
+          <td>${item.posicao}</td>
           <td>${item.nome}</td>
           <td>${item.serie}</td>
           <td>${item.pontos}</td>

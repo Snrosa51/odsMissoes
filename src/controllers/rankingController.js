@@ -1,3 +1,4 @@
+// src/controllers/rankingController.js
 const db = require('../db');
 
 /**
@@ -5,13 +6,12 @@ const db = require('../db');
  */
 exports.getRanking = (req, res) => {
   const sql = `
-    SELECT 
+    SELECT
       nome,
       serie,
-      missaoTitulo,
       SUM(pontos) AS pontos
     FROM respostas
-    GROUP BY nome, serie, missao_titulo
+    GROUP BY nome, serie
     ORDER BY pontos DESC
     LIMIT 12
   `;
@@ -27,7 +27,9 @@ exports.getRanking = (req, res) => {
     res.json(
       rows.map((r, index) => ({
         posicao: index + 1,
-        ...r
+        nome: r.nome,
+        serie: r.serie,
+        pontos: r.pontos
       }))
     );
   });

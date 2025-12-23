@@ -1,22 +1,23 @@
-// src/controllers/missionsController.js
-const db = require('../db');
+const db = require("../db");
 
 exports.listarMissoes = async (req, res) => {
   try {
-    const [rows] = await db.query(
-      'SELECT ods_codigo, nome, acoes_json FROM missions'
-    );
+    const [rows] = await db.query(`
+      SELECT id, codigo, nome, acoes_json
+      FROM missions
+      ORDER BY id
+    `);
 
-    const missions = rows.map(row => ({
-      ods_codigo: row.ods_codigo,
-      nome: row.nome,
-      acoes: row.acoes_json ? JSON.parse(row.acoes_json) : []
+    const missoes = rows.map(m => ({
+      id: m.id,                 // usado internamente
+      codigo: m.codigo,         // exibido (ODS3)
+      nome: m.nome,
+      acoes: m.acoes_json || []
     }));
 
-    res.json(missions);
-  } catch (error) {
-    console.error('Erro ao listar missões:', error);
-    res.status(500).json({ error: 'Erro ao buscar missões' });
+    res.json(missoes);
+  } catch (err) {
+    console.error("Erro ao buscar missões:", err);
+    res.status(500).json({ error: "Erro ao buscar missões" });
   }
 };
-

@@ -1,19 +1,26 @@
-const db = require("../db")
+// src/controllers/respostasController.js
+const db = require("../db");
 
 exports.create = (req, res) => {
-  const { nome, serie, missaoTitulo, acoes_json } = req.body;
+  const { nome, serie, missaoId, acoes } = req.body;
 
-  if (!nome || !serie || !missaoTitulo || !acoes_json || !acoes_json.length) {
+  // validações básicas
+  if (!nome || !serie || !missaoId || !Array.isArray(acoes) || acoes.length === 0) {
     return res.status(400).json({
-      error: 'Dados incompletos para registrar resposta'
+      error: "Dados incompletos para registrar resposta"
     });
   }
 
-  const pontos = acoes_json.length * 10;
+  // regra de pontuação
+  const PONTOS_POR_ACAO = 10;
+  const pontos = acoes.length * PONTOS_POR_ACAO;
+
+  // transforma ações em JSON estruturado
+  const acoesJson = acoes.map(id => ({ id }));
 
   const sql = `
     INSERT INTO respostas
-    (nome, serie, missao_titulo, acoes_json, pontos)
+      (nome, serie, missao_id, acoes_json, pontos)
     VALUES (?, ?, ?, ?, ?)
   `;
 
@@ -22,19 +29,19 @@ exports.create = (req, res) => {
     [
       nome,
       serie,
-      missaoTitulo,
-      JSON.stringify(acoes_json),
+      missaoId,                     // INT (FK lógica)
+      JSON.stringify(acoesJson),    // JSON válido
       pontos
     ],
     (err) => {
       if (err) {
-        console.error('Erro ao salvar resposta:', err);
+        console.error("Erro ao salvar resposta:", err);
         return res.status(500).json({
-          error: 'Erro ao salvar resposta.'
+          error: "Erro ao salvar resposta."
         });
       }
 
-      // 🔥 retorno esperado pelo frontend
+      // resposta esperada pelo frontend
       res.json({
         success: true,
         pontos
@@ -42,3 +49,4 @@ exports.create = (req, res) => {
     }
   );
 };
+
