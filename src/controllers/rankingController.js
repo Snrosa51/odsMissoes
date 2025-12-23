@@ -1,34 +1,35 @@
 // src/controllers/rankingController.js
 const db = require('../db');
 
-exports.getRanking = (req, res) => {
-  const sql = `
-    SELECT
-      nome,
-      serie,
-      SUM(pontos) AS pontos
-    FROM respostas
-    GROUP BY nome, serie
-    ORDER BY pontos DESC
-    LIMIT 12
-  `;
+exports.getRanking = async (req, res) => {
+  try {
+    const sql = `
+      SELECT
+        nome,
+        serie,
+        SUM(pontos) AS pontos
+      FROM respostas
+      GROUP BY nome, serie
+      ORDER BY pontos DESC
+      LIMIT 12
+    `;
 
-  db.query(sql, (err, rows) => {
-    if (err) {
-      console.error('ERRO SQL RANKING:', err);
-      return res.status(500).json({
-        error: 'Erro ao buscar ranking'
-      });
-    }
+    const [rows] = await db.query(sql);
 
-    const resultado = rows.map((r, index) => ({
+    const ranking = rows.map((row, index) => ({
       posicao: index + 1,
-      nome: r.nome,
-      serie: r.serie,
-      pontos: Number(r.pontos)
+      nome: row.nome,
+      serie: row.serie,
+      pontos: Number(row.pontos)
     }));
 
-    res.json(resultado);
-  });
+    res.json(ranking);
+
+  } catch (error) {
+    console.error("ERRO AO BUSCAR RANKING:", error);
+    res.status(500).json({
+      error: "Erro ao buscar ranking"
+    });
+  }
 };
 
