@@ -1,3 +1,4 @@
+// src/index.js
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -13,7 +14,7 @@ const PORT = process.env.PORT || 8080;
 app.use(cors());
 app.use(express.json());
 
-// arquivos estáticos
+// arquivos estáticos (dashboard)
 app.use(express.static(path.join(__dirname, "../public")));
 
 // =======================
@@ -25,19 +26,22 @@ app.use("/api/ranking", rankingRoutes);
 app.use("/api/admin", adminRoutes);
 
 // =======================
-// HEALTHCHECK (UMA ÚNICA VEZ)
+// HEALTHCHECK (ÚNICO)
 // =======================
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
 // =======================
-// FALLBACK FRONTEND
+// FALLBACK FRONTEND (APENAS HTML)
 // =======================
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/index.html"));
+  res.sendFile(path.join(__dirname, "../public/dashboard.html"));
 });
 
+// =======================
+// START SERVER
+// =======================
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });

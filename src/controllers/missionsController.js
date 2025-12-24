@@ -1,3 +1,4 @@
+// src/controllers/missionsController.js
 const db = require("../db");
 
 exports.listarMissoes = async (req, res) => {
@@ -8,42 +9,36 @@ exports.listarMissoes = async (req, res) => {
       ORDER BY id
     `);
 
-    const missoes = rows.map(m => {
+    const missoes = rows.map(row => {
       let acoes = [];
 
-      if (m.acoes_json) {
-        try {
-          // Se vier como string → parse
-          if (typeof m.acoes_json === "string") {
-            acoes = JSON.parse(m.acoes_json);
-          }
-          // Se já vier como objeto → usa direto
-          else if (Array.isArray(m.acoes_json)) {
-            acoes = m.acoes_json;
-          }
-        } catch (e) {
-          console.error(
-            `JSON inválido em missions.id=${m.id}:`,
-            m.acoes_json
-          );
-          acoes = [];
+      try {
+        // garante JSON válido sempre
+        if (row.acoes_json) {
+          acoes = typeof row.acoes_json === "string"
+            ? JSON.parse(row.acoes_json)
+            : row.acoes_json;
         }
+      } catch (jsonErr) {
+        console.error("JSON inválido em missions.acoes_json:", jsonErr);
+        acoes = [];
       }
 
       return {
-        id: m.id,
-        codigo: m.codigo,
-        nome: m.nome,
+        id: row.id,
+        codigo: row.codigo,
+        nome: row.nome,
         acoes
       };
     });
 
-    res.json(missoes);
+    return res.json(missoes);
 
   } catch (err) {
-    console.error("Erro ao buscar missões:", err);
-    res.status(500).json({
-      error: "Erro ao buscar missões"
+    console.error("Erro geral ao listar missões:", err);
+    return res.status(500).json({
+      error: "Erro ao carregar missões"
     });
   }
 };
+
