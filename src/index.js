@@ -7,6 +7,7 @@ const missionsRoutes = require("./routes/missions");
 const respostasRoutes = require("./routes/respostas");
 const rankingRoutes = require("./routes/ranking");
 const adminRoutes = require("./routes/admin");
+const debugRoutes = require("./routes/debug");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -14,7 +15,7 @@ const PORT = process.env.PORT || 8080;
 app.use(cors());
 app.use(express.json());
 
-// arquivos estáticos (dashboard)
+// arquivos estáticos
 app.use(express.static(path.join(__dirname, "../public")));
 
 // =======================
@@ -24,24 +25,22 @@ app.use("/api/missoes", missionsRoutes);
 app.use("/api/respostas", respostasRoutes);
 app.use("/api/ranking", rankingRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/debug", debugRoutes);
 
 // =======================
-// HEALTHCHECK (ÚNICO)
+// HEALTHCHECK ÚNICO
 // =======================
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
 // =======================
-// FALLBACK FRONTEND (APENAS HTML)
+// FALLBACK FRONTEND
 // =======================
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/dashboard.html"));
+  res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
-// =======================
-// START SERVER
-// =======================
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });

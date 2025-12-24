@@ -1,8 +1,8 @@
+// src/controllers/seedController.js
 const db = require("../db");
 
 exports.seedMissoes = async (req, res) => {
   try {
-    // 🔥 dados oficiais das ODS (exemplo inicial)
     const missoes = [
       {
         codigo: "ODS3",
@@ -28,10 +28,9 @@ exports.seedMissoes = async (req, res) => {
       }
     ];
 
-    // ⚠️ limpa a tabela (controlado)
+     // limpa para evitar duplicação
     await db.query("DELETE FROM missions");
 
-    // 🔁 insere novamente
     for (const m of missoes) {
       await db.query(
         `
@@ -46,16 +45,15 @@ exports.seedMissoes = async (req, res) => {
       );
     }
 
-    res.json({
+    return res.json({
       success: true,
-      message: "Missões ODS inseridas com sucesso!",
       total: missoes.length
     });
 
   } catch (err) {
-    console.error("Erro no seed de missões:", err);
-    res.status(500).json({
-      error: "Erro ao executar seed de missões"
+    console.error("Erro no seed:", err);
+    return res.status(500).json({
+      error: "Erro ao executar seed"
     });
   }
 };
