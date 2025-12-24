@@ -2,7 +2,7 @@
 const db = require("../db");
 
 exports.seedMissoes = async (req, res) => {
-  try {
+      try {
     const missoes = [
       {
         codigo: "ODS3",
@@ -33,27 +33,19 @@ exports.seedMissoes = async (req, res) => {
 
     for (const m of missoes) {
       await db.query(
-        `
-        INSERT INTO missions (codigo, nome, acoes_json)
-        VALUES (?, ?, ?)
-        `,
-        [
-          m.codigo,
-          m.nome,
-          JSON.stringify(m.acoes)
-        ]
+        `INSERT INTO missions (codigo, nome, acoes_json)
+         VALUES (?, ?, ?)`,
+        [m.codigo, m.nome, JSON.stringify(m.acoes)]
       );
     }
 
-    return res.json({
+    res.json({
       success: true,
       total: missoes.length
     });
 
   } catch (err) {
     console.error("Erro no seed:", err);
-    return res.status(500).json({
-      error: "Erro ao executar seed"
-    });
+    res.status(500).json({ error: "Erro ao executar seed" });
   }
 };
