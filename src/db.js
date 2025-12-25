@@ -1,4 +1,3 @@
-// src/db.js
 const mysql = require("mysql2/promise");
 
 const pool = mysql.createPool({
@@ -6,12 +5,14 @@ const pool = mysql.createPool({
   user: process.env.MYSQLUSER,
   password: process.env.MYSQLPASSWORD,
   database: process.env.MYSQLDATABASE,
-  port: Number(process.env.MYSQLPORT),
+  port: process.env.MYSQLPORT,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  ssl: { rejectUnauthorized: false }
 });
 
 module.exports = pool;
+
 
 
