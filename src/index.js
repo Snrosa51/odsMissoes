@@ -1,3 +1,6 @@
+// src/index.js
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -5,35 +8,71 @@ const path = require("path");
 const missionsRoutes = require("./routes/missions");
 const respostasRoutes = require("./routes/respostas");
 const rankingRoutes = require("./routes/ranking");
-const seedRoutes = require("./routes/seed");
+const adminRoutes = require("./routes/admin");
+
+const seedController = require("./controllers/seedController");
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
+// =======================
+// Middlewares globais
+// =======================
 app.use(cors());
 app.use(express.json());
 
-// frontend
+// =======================
+// SEED AUTOMÁTICO (BOOT)
+// =======================
+(async () => {
+  if (process.env.RUN_SEED === "true") {
+    console.log("🚀 RUN_SEED=true → executando seed automático");
+
+    try {
+      const result = await seedController.executarSeed();
+      console.log("✅ Seed automático finalizado:", result);
+
+      console.log(
+        "⚠️ IMPORTANTE: após confirmar o seed, defina RUN_SEED=false no Railway"
+      );
+    } catch (err) {
+      console.error("❌ Erro no seed automático:", err);
+    }
+  } else {
+    console.log("ℹ️ RUN_SEED != true → seed automático ignorado");
+  }
+})();
+
+// =======================
+// Arquivos estáticos (frontend)
+// =======================
 app.use(express.static(path.join(__dirname, "../public")));
 
-// API
+// =======================
+// Rotas da API
+// =======================
 app.use("/api/missoes", missionsRoutes);
 app.use("/api/respostas", respostasRoutes);
 app.use("/api/ranking", rankingRoutes);
+app.use("/api/admin", adminRoutes);
 
-// 🚨 SEED (isolado e claro)
-app.use("/", seedRoutes);
-
-// health
+// =======================
+// Healthcheck (Railway)
+// =======================
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-// fallback frontend
+// =======================
+// Fallback frontend (SPA)
+// =======================
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
+// =======================
+// Start server
+// =======================
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
