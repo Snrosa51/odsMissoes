@@ -1,7 +1,17 @@
+// src/controllers/seedController.js
 const db = require("../db");
 
 exports.seedMissoes = async (req, res) => {
   try {
+    // 🔐 proteção por token
+    const token = req.headers["x-seed-token"];
+    if (!token || token !== process.env.SEED_TOKEN) {
+      return res.status(401).json({
+        success: false,
+        error: "Token inválido ou ausente"
+      });
+    }
+
     const missoes = [
       {
         codigo: "ODS3",
@@ -22,47 +32,33 @@ exports.seedMissoes = async (req, res) => {
           { id: "E2", nome: "Ajudar um colega nos estudos" },
           { id: "E3", nome: "Organizar o material escolar" },
           { id: "E4", nome: "Fazer o dever de casa" },
-          { id: "E5", nome: "Chegar e sair da sala no horário correto" }
+          { id: "E5", nome: "Chegar e sair da sala no horário" }
         ]
       }
     ];
 
-    // 🔥 TRANSAÇÃO (segurança total)
-    const conn = await db.getConnection();
-    try {
-      await conn.beginTransaction();
+    // limpa para evitar duplicação
+    await db.query("DELETE FROM missions");
 
-      await conn.query("DELETE FROM missions");
-
-      for (const m of missoes) {
-        await conn.query(
-          `INSERT INTO missions (codigo, nome, acoes_json)
-           VALUES (?, ?, ?)`,
-          [m.codigo, m.nome, JSON.stringify(m.acoes)]
-        );
-      }
-
-      await conn.commit();
-
-      res.json({
-        success: true,
-        message: "Missoes inseridas com sucesso",
-        total: missoes.length
-      });
-
-    } catch (err) {
-      await conn.rollback();
-      throw err;
-    } finally {
-      conn.release();
+    for (const m of missoes) {
+      await db.query(
+        `INSERT INTO missions (codigo, nome, acoes_json)
+         VALUES (?, ?, ?)`,
+        [m.codigo, m.nome, JSON.stringify(m.acoes)]
+      );
     }
 
+    res.json({
+      success: true,
+      total: missoes.length
+    });
+
   } catch (err) {
-    console.error("❌ ERRO NO SEED:", err);
+    console.error("Erro no seed:", err);
     res.status(500).json({
       success: false,
-      error: "Falha ao executar seed",
-      details: err.message
+      error: "Erro ao executar seed"
     });
   }
 };
+
