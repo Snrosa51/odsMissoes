@@ -13,7 +13,7 @@ const adminRoutes = require("./routes/admin");
 const seedController = require("./controllers/seedController");
 
 const app = express();
-const PORT = process.env.PORT || 3306;
+const PORT = process.env.PORT || 3000;
 
 // =======================
 // Middlewares globais
