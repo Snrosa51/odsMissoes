@@ -13,7 +13,7 @@ const adminRoutes = require("./routes/admin");
 const seedController = require("./controllers/seedController");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3306;
 
 // =======================
 // Middlewares globais
@@ -25,7 +25,7 @@ app.use(express.json());
 // SEED AUTOMÁTICO (BOOT)
 // =======================
 (async () => {
-  if (process.env.RUN_SEED === "true") {
+  if (process.env.RUN_SEED === "false") {
     console.log("🚀 RUN_SEED=false → executando seed automático");
 
     try {
