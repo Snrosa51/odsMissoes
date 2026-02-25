@@ -26,7 +26,7 @@ app.use(express.json());
 // =======================
 (async () => {
   if (process.env.RUN_SEED === "true") {
-    console.log("🚀 RUN_SEED=true → executando seed automático");
+    console.log("🚀 RUN_SEED=false → executando seed automático");
 
     try {
       const result = await seedController.executarSeed();
@@ -39,7 +39,7 @@ app.use(express.json());
       console.error("❌ Erro no seed automático:", err);
     }
   } else {
-    console.log("ℹ️ RUN_SEED != true → seed automático ignorado");
+    console.log("ℹ️ RUN_SEED != false → seed automático ignorado");
   }
 })();
 
