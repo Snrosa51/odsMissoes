@@ -1,16 +1,29 @@
 const mysql = require("mysql2/promise");
 
-const required = ["MYSQLHOST", "MYSQLUSER", "MYSQLPASSWORD", "MYSQLDATABASE"];
-for (const k of required) {
-  if (!process.env[k]) throw new Error(`Missing env var: ${k}`);
+function parseDatabaseUrl(url) {
+  const u = new URL(url);
+  return {
+    host: u.hostname,
+    port: Number(u.port || 3306),
+    user: decodeURIComponent(u.username),
+    password: decodeURIComponent(u.password),
+    database: u.pathname.replace(/^\//, ""),
+  };
 }
 
+const cfg =
+  process.env.DATABASE_URL
+    ? parseDatabaseUrl(process.env.DATABASE_URL)
+    : {
+        host: process.env.MYSQLHOST,
+        port: Number(process.env.MYSQLPORT || 3306),
+        user: process.env.MYSQLUSER,
+        password: process.env.MYSQLPASSWORD,
+        database: process.env.MYSQLDATABASE,
+      };
+
 const pool = mysql.createPool({
-  host: process.env.MYSQLHOST,
-  port: Number(process.env.MYSQLPORT || 3306),
-  user: process.env.MYSQLUSER,
-  password: process.env.MYSQLPASSWORD,
-  database: process.env.MYSQLDATABASE,
+  ...cfg,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -18,5 +31,4 @@ const pool = mysql.createPool({
 });
 
 module.exports = pool;
-
 
