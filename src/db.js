@@ -1,70 +1,42 @@
+// db.js
 const mysql = require("mysql2/promise");
 
-function parseDatabaseUrl(url) {
-  const u = new URL(url);
+/**
+ * Railway: use DATABASE_URL (recomendado)
+ * Local: use DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT
+ */
+function getDbConfig() {
+  if (process.env.DATABASE_URL && process.env.DATABASE_URL.trim()) {
+    const url = new URL(process.env.DATABASE_URL);
+    return {
+      host: url.hostname,
+      port: Number(url.port || 3306),
+      user: decodeURIComponent(url.username),
+      password: decodeURIComponent(url.password),
+      database: url.pathname.replace(/^\//, ""),
+      // Railway geralmente funciona sem ssl dentro da rede privada.
+      // Se estiver usando host público externo, pode precisar ssl.
+      // ssl: { rejectUnauthorized: false },
+    };
+  }
 
   return {
-    host: u.hostname,
-    port: Number(u.port || 3306),
-    user: decodeURIComponent(u.username),
-    password: decodeURIComponent(u.password),
-    database: u.pathname.replace(/^\//, ""),
+    host: process.env.DB_HOST || "localhost",
+    port: Number(process.env.DB_PORT || 3306),
+    user: process.env.DB_USER || "root",
+    password: process.env.DB_PASSWORD || "",
+    database: process.env.DB_NAME || "odsMissoes",
   };
 }
 
-function validateEnv(vars) {
-  for (const v of vars) {
-    if (!process.env[v]) {
-      throw new Error(`❌ Missing required env var: ${v}`);
-    }
-  }
-}
-
-// ===============================
-// CONFIG PRIORITY
-// 1️⃣ DATABASE_URL (Railway padrão)
-// 2️⃣ Variáveis MYSQL* individuais
-// ===============================
-
-let config;
-
-if (process.env.DATABASE_URL) {
-  console.log("🔐 Using DATABASE_URL (Railway Private Network)");
-  config = parseDatabaseUrl(process.env.DATABASE_URL);
-} else {
-  console.log("🔐 Using manual MYSQL* environment variables");
-
-  validateEnv([
-    "MYSQLHOST",
-    "MYSQLUSER",
-    "MYSQLPASSWORD",
-    "MYSQLDATABASE",
-  ]);
-
-  config = {
-    host: process.env.MYSQLHOST,
-    port: Number(process.env.MYSQLPORT || 3306),
-    user: process.env.MYSQLUSER,
-    password: process.env.MYSQLPASSWORD,
-    database: process.env.MYSQLDATABASE,
-  };
-}
+const cfg = getDbConfig();
 
 const pool = mysql.createPool({
-  ...config,
+  ...cfg,
   waitForConnections: true,
-  connectionLimit: 10,
+  connectionLimit: Number(process.env.DB_POOL_LIMIT || 10),
   queueLimit: 0,
   connectTimeout: 10000,
 });
-
-(async () => {
-  try {
-    await pool.query("SELECT 1");
-    console.log("✅ MySQL conectado com sucesso");
-  } catch (err) {
-    console.error("❌ Erro ao conectar no MySQL:", err.message);
-  }
-})();
 
 module.exports = pool;

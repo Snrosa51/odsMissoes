@@ -5,7 +5,7 @@ exports.listarMissoes = async (req, res) => {
   try {
     const [rows] = await db.query(`
       SELECT id, codigo, nome, acoes_json
-      FROM missions
+      FROM missoes
       ORDER BY id
     `);
 
