@@ -1,78 +1,78 @@
-// src/index.js
-require("dotenv").config();
-
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
 
-const missionsRoutes = require("./routes/missions");
-const respostasRoutes = require("./routes/respostas");
-const rankingRoutes = require("./routes/ranking");
-const adminRoutes = require("./routes/admin");
+require("dotenv").config();
 
-const seedController = require("./controllers/seedController");
+const sequelize = require("./config/db");
+const apiRoutes = require("./routes/api");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// =======================
-// Middlewares globais
-// =======================
-app.use(cors());
+// CORS (permite dashboard local e Railway)
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  })
+);
+
 app.use(express.json());
 
-// =======================
-// SEED AUTOMÁTICO (BOOT)
-// =======================
-(async () => {
-  if (process.env.RUN_SEED === "false") {
-    console.log("🚀 RUN_SEED=false → executando seed automático");
-
-    try {
-      const result = await seedController.executarSeed();
-      console.log("✅ Seed automático finalizado:", result);
-
-      console.log(
-        "⚠️ IMPORTANTE: após confirmar o seed, defina RUN_SEED=false no Railway"
-      );
-    } catch (err) {
-      console.error("❌ Erro no seed automático:", err);
-    }
-  } else {
-    console.log("ℹ️ RUN_SEED != false → seed automático ignorado");
-  }
-})();
-
-// =======================
-// Arquivos estáticos (frontend)
-// =======================
-app.use(express.static(path.join(__dirname, "../public")));
-
-// =======================
 // Rotas da API
-// =======================
-app.use("/api/missoes", missionsRoutes);
-app.use("/api/respostas", respostasRoutes);
-app.use("/api/ranking", rankingRoutes);
-app.use("/api/admin", adminRoutes);
+app.use("/api", apiRoutes);
 
-// =======================
-// Healthcheck (Railway)
-// =======================
-app.get("/api/health", (req, res) => {
-  res.json({ status: "ok" });
+// Healthcheck (Railway gosta disso)
+app.get("/", (req, res) => res.send("✅ Backend ODS rodando"));
+
+// 🔧 Rota manual para rodar seeds (PROTEGIDA)
+app.get("/admin/seed", async (req, res) => {
+  try {
+    const token = req.query.token;
+    const expected = process.env.ADMIN_SEED_TOKEN;
+
+    if (!expected) {
+      return res
+        .status(500)
+        .send("ADMIN_SEED_TOKEN não definido no ambiente.");
+    }
+
+    if (token !== expected) {
+      return res.status(401).send("Não autorizado.");
+    }
+
+    console.log("🌱 Executando seeds via /admin/seed ...");
+    const seedMissoes = require("./seed/seedMissoes");
+    const seedAcoes = require("./seed/seedAcoes");
+
+    await seedMissoes();
+    await seedAcoes();
+
+    res.send("✅ Seeds executados com sucesso!");
+  } catch (err) {
+    console.error("❌ Erro ao executar seeds:", err);
+    res.status(500).send("Erro ao executar seeds.");
+  }
 });
 
-// =======================
-// Fallback frontend (SPA)
-// =======================
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/index.html"));
-});
+const PORT = process.env.PORT || 8080;
 
-// =======================
-// Start server
-// =======================
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando na porta ${PORT}`);
-});
+async function start() {
+  try {
+    console.log("🔗 Testando conexão com o banco...");
+    await sequelize.authenticate();
+    console.log("✅ Banco conectado.");
+
+    console.log("🔄 Sincronizando modelos sem alterar tabelas...");
+    await sequelize.sync(); // sem force/alter
+    console.log("✅ Modelos sincronizados.");
+
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`🚀 Servidor ouvindo na porta ${PORT}`);
+    });
+  } catch (err) {
+    console.error("❌ ERRO FATAL AO INICIAR O SERVIDOR:", err);
+    process.exit(1);
+  }
+}
+
+start();
