@@ -31,11 +31,11 @@ async function executarSeed() {
     }
   ];
 
-  await db.query("DELETE FROM missions");
+  await db.query("DELETE FROM missoes");
 
   for (const m of missoes) {
     await db.query(
-      `INSERT INTO missions (codigo, nome, acoes_json)
+      `INSERT INTO missoes (codigo, nome, acoes_json)
        VALUES (?, ?, ?)`,
       [m.codigo, m.nome, JSON.stringify(m.acoes)]
     );
