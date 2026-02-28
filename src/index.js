@@ -14,8 +14,17 @@ const app = express();
 app.disable("x-powered-by");
 app.use(express.json({ limit: "200kb" }));
 
+function safeRequire(p) {
+  try { return require(p); }
+  catch (e) {
+    console.error(`Falha ao carregar módulo: ${p}`);
+    throw e;
+  }
+}
+
+app.use("/api", safeRequire("./routes/missions"));
 // Arquivos estáticos do frontend
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "../public")));
 
 // Rotas
 app.use("/api", require("./routes/missions"));
