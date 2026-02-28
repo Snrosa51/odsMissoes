@@ -18,9 +18,9 @@ app.use(express.json({ limit: "200kb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
 // Rotas
-app.use("/api", require(".src/routes/missions"));
-app.use("/api", require(".src/routes/respostas"));
-app.use("/api", require(".src/routes/ranking"));
+app.use("/api", require("./src/routes/missions"));
+app.use("/api", require("./src/routes/respostas"));
+app.use("/api", require("./src/routes/ranking"));
 
 // Healthcheck
 app.get("/health", (req, res) => res.json({ ok: true }));
