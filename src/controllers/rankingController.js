@@ -6,10 +6,10 @@ exports.getRanking = async (req, res) => {
     const sql = `
       SELECT
         nome,
-        serie,
+        turma,
         SUM(pontos) AS pontos
       FROM respostas
-      GROUP BY nome, serie
+      GROUP BY nome, turma
       ORDER BY pontos DESC
       LIMIT 12
     `;
@@ -19,7 +19,7 @@ exports.getRanking = async (req, res) => {
     const ranking = rows.map((row, index) => ({
       posicao: index + 1,
       nome: row.nome,
-      serie: row.serie,
+      turma: row.turma,
       pontos: Number(row.pontos)
     }));
 

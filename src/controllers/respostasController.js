@@ -2,15 +2,15 @@ const db = require("../db");
 
 exports.create = async (req, res) => {
   try {
-    const { nome, serie, missaoId, acoes } = req.body;
+    const { nome_aluno, turma, missao_code, acao_id } = req.body;
 
     // validações básicas
     if (
-      !nome ||
-      !serie ||
-      !missaoId ||
-      !Array.isArray(acoes) ||
-      acoes.length === 0
+      !nome_aluno ||
+      !turma ||
+      !missao_code ||
+      !Array.isArray(acao_id) ||
+      acao_id.length === 0
     ) {
       return res.status(400).json({
         error: "Dados incompletos para registrar resposta"
@@ -19,21 +19,21 @@ exports.create = async (req, res) => {
 
     // regra de pontuação
     const PONTOS_POR_ACAO = 10;
-    const pontos = acoes.length * PONTOS_POR_ACAO;
+    const pontos = acao_id.length * PONTOS_POR_ACAO;
 
     // estrutura JSON das ações
-    const acoesJson = acoes.map(id => ({ id }));
+    const acoesJson = acao_id.map(id => ({ id }));
 
     const sql = `
       INSERT INTO respostas
-        (nome, serie, missao_id, acoes_json, pontos)
+        (nome, turma, missao_code, acao_id, pontos)
       VALUES (?, ?, ?, ?, ?)
     `;
 
     await db.query(sql, [
       nome,
-      serie,
-      missaoId,                  // INT (FK lógica)
+      turma,
+      missao_code,                  // INT (FK lógica)
       JSON.stringify(acoesJson), // JSON válido
       pontos
     ]);

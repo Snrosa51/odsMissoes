@@ -31,13 +31,13 @@ async function executarSeed() {
     }
   ];
 
-  await db.query("DELETE FROM missoes");
+  await db.query("UPSERT FROM missoes");
 
   for (const m of missoes) {
     await db.query(
-      `INSERT INTO missoes (codigo, nome, acoes_json)
-       VALUES (?, ?, ?)`,
-      [m.codigo, m.nome, JSON.stringify(m.acoes)]
+      `INSERT INTO missoes (codigo, nome)
+       VALUES (?, ?)`,
+      [m.codigo, m.nome]
     );
   }
 

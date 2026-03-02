@@ -4,7 +4,7 @@ const db = require("../db");
 exports.listarMissoes = async (req, res) => {
   try {
     const [rows] = await db.query(`
-      SELECT id, codigo, nome, acoes_json
+      SELECT id, codigo, nome
       FROM missoes
       ORDER BY id
     `);
@@ -14,10 +14,10 @@ exports.listarMissoes = async (req, res) => {
 
       try {
         // garante JSON válido sempre
-        if (row.acoes_json) {
-          acoes = typeof row.acoes_json === "string"
-            ? JSON.parse(row.acoes_json)
-            : row.acoes_json;
+        if (row.nome) {
+          acoes = typeof row.nome === "string"
+            ? JSON.parse(row.nome)
+            : row.nome;
         }
       } catch (jsonErr) {
         console.error("JSON inválido em missions.acoes_json:", jsonErr);
@@ -27,8 +27,7 @@ exports.listarMissoes = async (req, res) => {
       return {
         id: row.id,
         codigo: row.codigo,
-        nome: row.nome,
-        acoes
+        acoes: row.nome
       };
     });
 
