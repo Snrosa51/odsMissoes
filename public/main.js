@@ -4,6 +4,8 @@ const API_BASE = ""; // mesmo domínio (local + Railway)
 async function apiFetch(path, options = {}) {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), 12000);
+  const seedRoutes = require("./routes/seedRoutes");
+app.use("/admin", seedRoutes);
 
   try {
     const resp = await fetch(`${API_BASE}${path}`, {
