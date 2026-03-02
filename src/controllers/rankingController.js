@@ -5,12 +5,14 @@ exports.getRanking = async (req, res) => {
   try {
     const sql = `
       SELECT
-        nome,
-        turma,
-        SUM(pontos) AS pontos
-      FROM respostas
-      GROUP BY nome, turma
-      ORDER BY pontos DESC
+  r.turma,
+  r.nome_aluno,
+  SUM(a.pontos) AS total_pontos,
+  COUNT(*) AS total_acoes
+FROM respostas r
+JOIN acoes a ON a.id = r.acao_id
+GROUP BY r.turma, r.nome_aluno
+ORDER BY total_pontos DESC, total_acoes DESC;
       LIMIT 12
     `;
 

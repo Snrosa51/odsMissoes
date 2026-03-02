@@ -1,75 +1,55 @@
 // src/controllers/seedController.js
 const db = require("../db");
 
-/**
- * FUNÇÃO INTERNA (reutilizável)
- * Pode ser usada no boot OU via HTTP
- */
 async function executarSeed() {
   const missoes = [
     {
       codigo: "ODS3",
       nome: "Saúde e Bem-estar",
       acoes: [
-        { id: "D1", nome: "Lavar as mãos regularmente" },
-        { id: "D2", nome: "Manter unhas limpas e cortadas" },
-        { id: "D3", nome: "Praticar atividade física" },
-        { id: "D4", nome: "Se alimentar na hora certa" },
-        { id: "D5", nome: "Comer frutas, legumes e verduras" }
+        { id: "D1", nome: "Lavar as mãos regularmente", pontos: 10 },
+        { id: "D2", nome: "Manter unhas limpas e cortadas", pontos: 10 },
+        { id: "D3", nome: "Praticar atividade física", pontos: 10 },
+        { id: "D4", nome: "Se alimentar na hora certa", pontos: 10 },
+        { id: "D5", nome: "Comer frutas, legumes e verduras", pontos: 10 }
       ]
     },
     {
       codigo: "ODS4",
       nome: "Educação de Qualidade",
       acoes: [
-        { id: "E1", nome: "Ler um pouco todos os dias" },
-        { id: "E2", nome: "Ajudar um colega nos estudos" },
-        { id: "E3", nome: "Organizar o material escolar" },
-        { id: "E4", nome: "Fazer o dever de casa" },
-        { id: "E5", nome: "Chegar no horário" }
+        { id: "E1", nome: "Ler um pouco todos os dias", pontos: 10 },
+        { id: "E2", nome: "Ajudar um colega nos estudos", pontos: 10 },
+        { id: "E3", nome: "Organizar o material escolar", pontos: 10 },
+        { id: "E4", nome: "Fazer o dever de casa", pontos: 10 },
+        { id: "E5", nome: "Chegar no horário", pontos: 10 }
       ]
     }
   ];
 
-  await db.query("UPSERT FROM missoes");
-
   for (const m of missoes) {
+
+    // UPSERT missão
     await db.query(
       `INSERT INTO missoes (codigo, nome)
-       VALUES (?, ?)`,
+       VALUES (?, ?)
+       ON DUPLICATE KEY UPDATE nome = VALUES(nome)`,
       [m.codigo, m.nome]
     );
-  }
 
-  return { total: missoes.length };
-}
-
-/**
- * CONTROLLER HTTP (rota protegida)
- */
-async function seedMissoes(req, res) {
-  try {
-    const token = req.headers["x-seed-token"];
-
-    if (token !== process.env.SEED_TOKEN) {
-      return res.status(403).json({ error: "Token inválido" });
+    // Inserir ações
+    for (const acao of m.acoes) {
+      await db.query(
+        `INSERT INTO acoes (id, nome, pontos, missao_codigo)
+         VALUES (?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE
+           nome = VALUES(nome),
+           pontos = VALUES(pontos),
+           missao_codigo = VALUES(missao_codigo)`,
+        [acao.id, acao.nome, acao.pontos, m.codigo]
+      );
     }
-
-    const result = await executarSeed();
-
-    res.json({
-      success: true,
-      ...result
-    });
-  } catch (err) {
-    console.error("Erro no seed:", err);
-    res.status(500).json({ error: "Erro ao executar seed" });
   }
+
+  return { totalMissoes: missoes.length };
 }
-
-module.exports = {
-  executarSeed,
-  seedMissoes
-};
-
-
